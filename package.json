@@ -1,0 +1,20 @@
+{
+  "name": "AutoBellCounter",
+  "version": "1.0.0",
+  "description": "ベルコが好き",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pekko1215/AutoBellCounter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pekko1215/AutoBellCounter/issues"
+  },
+  "homepage": "https://github.com/pekko1215/AutoBellCounter#readme"
+}
