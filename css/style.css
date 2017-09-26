@@ -1,0 +1,88 @@
+html{
+    color: white;
+    height:100%;
+}
+body{
+    margin: 5px;
+    height:95%;
+}
+
+#Counter{
+    background-color: #555555;
+    padding:5px;
+    height:100%;
+}
+
+#Play{
+    width:130px;
+    background-color: #222222;
+    text-align: center;
+    overflow: hidden;
+    float:left;
+}
+
+#Coin{
+    width:130px;
+    text-align: center;
+    overflow: hidden;
+    float:left;
+    background-color: #222222;
+}
+
+#OtherData{
+    width:calc(450px - 130px - 130px - 36px);
+    height:199px;
+    text-align: center;
+    overflow: hidden;
+    float:right;
+    background-color: #222222;
+}
+
+#OtherDataCount{
+    margin: 2px;
+    background-color: #000000;
+}
+
+#CoinCount{
+    margin: 2px;
+    background-color: #000000;
+}
+
+#AllPlayCount{
+    margin: 2px;
+    background-color: #000000;
+}
+#PlayCount{
+    margin: 2px;
+    background-color: #000000;
+}
+
+#AllPlayCountSeg{
+    margin:2px
+}
+
+#SlumpGraph{
+    width: 130px;
+    float:right;
+    overflow: hidden;
+    background-color: #333333;
+}
+
+#Bonus {
+    width: 130px;
+    text-align: center;
+    overflow: hidden;
+    top: 209px;
+    height: 220px;
+    position: absolute;
+    background-color: #444444;
+}
+.BonusCount > .BonusLabel{
+    height:18px;
+    font-family: Arial;
+}
+
+.BonusCountSeg{
+    height:33px;
+    margin:2px;
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AutoBellCounter</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script>
+        window.jQuery = window.$ = require('./js/jquery-3.2.1.min');
+    </script>
+    <script src="./js/sixteen-seg.js"></script>
+    <script src="./js/Client.js"></script>
+</head>
+<body>
+<div id="Counter">
+    <div id="Play">
+        <div id="AllPlayCount">
+            <h3>総ゲーム数</h3>
+            <div id="AllPlayCountSeg"></div>
+        </div>
+        <div id="PlayCount">
+            <h3>ゲーム数</h3>
+            <div id="PlayCountSeg"></div>
+        </div>
+    </div>
+
+    <div id="Coin">
+        <div id="CoinCount">
+            <h3>差枚数</h3>
+            <div id="CoinSeg"></div>
+        </div>
+    </div>
+    <div id="OtherData">
+        <div id="OtherDataCount">
+        </div>
+    </div>
+    <div id="SlumpGraph">
+        <canvas id="SlumpGraphCanvas" width="130px" height="95px">
+
+        </canvas>
+    </div>
+    <div id="Bonus">
+        <div class="BonusCount" id="Bonus1">
+            <div class="BonusLabel" id="BonusLabel1">BIG</div>
+            <div class="BonusCountSeg" id="BonusSeg1"></div>
+        </div>
+        <div class="BonusCount" id="Bonus2">
+            <div class="BonusLabel" id="BonusLabel2">BIG</div>
+            <div class="BonusCountSeg" id="BonusSeg2"></div>
+        </div>
+        <div class="BonusCount" id="Bonus3">
+            <div class="BonusLabel" id="BonusLabel3">BIG</div>
+            <div class="BonusCountSeg" id="BonusSeg3"></div>
+        </div>
+        <div class="BonusCount" id="Bonus4">
+            <div class="BonusLabel" id="BonusLabel4">BIG</div>
+            <div class="BonusCountSeg" id="BonusSeg4"></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   "description": "ベルコが好き",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "electron ."
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/pekko1215/AutoBellCounter/issues"
   },
-  "homepage": "https://github.com/pekko1215/AutoBellCounter#readme"
+  "homepage": "https://github.com/pekko1215/AutoBellCounter#readme",
+  "dependencies": {
+    "eventemitter2": "^4.1.2",
+    "serialport": "^5.0.0"
+  },
+  "devDependencies": {
+    "devtron": "^1.4.0",
+    "electron": "^1.7.8",
+    "electron-rebuild": "^1.6.0"
+  }
 }

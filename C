@@ -1,0 +1,40 @@
+{
+    "inCoin": 3,
+    "outCoin": 0,
+    "coin": -3,
+    "playCount": 1,
+    "allPlayCount": 1,
+    "bonusType": [
+        "BIG",
+        "REG"
+    ],
+    "countEvent": [
+        {
+            "event": "pin4",
+            "func": "(counter)=>{\r\n        var index = counter.data.bonusType.indexOf(\"type\");\r\n        counter.data.bonusCount[index]++;\r\n        counter.emit('bonusstart:'+type,this);\r\n        counter.emit('bonusstart',type,this);\r\n        counter.data.isBonus[index] = true;\r\n\r\n        counter.once(type+':down',()=>{\r\n            if(counter.data.isBonus[index]){\r\n                counter.data.isBonus[index] = false;\r\n                counter.emit('bonusend:'+type,this);\r\n                counter.emit('bonusend',type,this);\r\n                counter.data.playCount = 0;\r\n            }\r\n        })\r\n    }"
+        },
+        {
+            "event": "pin5",
+            "func": "(counter)=>{\r\n        var index = counter.data.bonusType.indexOf(\"type\");\r\n        counter.data.bonusCount[index]++;\r\n        counter.emit('bonusstart:'+type,this);\r\n        counter.emit('bonusstart',type,this);\r\n        counter.data.isBonus[index] = true;\r\n\r\n        counter.once(type+':down',()=>{\r\n            if(counter.data.isBonus[index]){\r\n                counter.data.isBonus[index] = false;\r\n                counter.emit('bonusend:'+type,this);\r\n                counter.emit('bonusend',type,this);\r\n                counter.data.playCount = 0;\r\n            }\r\n        })\r\n    }"
+        },
+        {
+            "event": "coin:insert",
+            "func": "(counter)=>{\r\n        counter.data.coin+=coin;\r\n        if(coin<0){\r\n            counter.data.inCoin+=-coin;\r\n        }else {\r\n            counter.data.outCoin+=coin;\r\n        }\r\n    }"
+        },
+        {
+            "event": "coin:payout",
+            "func": "(counter)=>{\r\n        counter.data.coin+=coin;\r\n        if(coin<0){\r\n            counter.data.inCoin+=-coin;\r\n        }else {\r\n            counter.data.outCoin+=coin;\r\n        }\r\n    }"
+        }
+    ],
+    "bonusCount": [
+        0,
+        0
+    ],
+    "isBonus": [
+        false,
+        false
+    ],
+    "payDelay": 500,
+    "betDelay": 500,
+    "gameCounter": "(counter,betCoin)=>{\r\n        if(!counter.data.isBonus.some((bool,i)=>{\r\n            var index = ignore.indexOf(counter.data.bonusType[i]);\r\n                if(index!=-1&&bool){\r\n                    return true;\r\n                }\r\n            })\r\n        ){\r\n            counter.data.playCount++;\r\n            counter.data.allPlayCount++;\r\n        }\r\n    }"
+}
