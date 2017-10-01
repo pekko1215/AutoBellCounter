@@ -30,7 +30,7 @@ app.on('ready', function() {
     ipcMain.on('counterInit',(event,data)=>{
         var portListener = new PortListener();
         portListener.getPortList().then((list)=>{
-            portListener.setPort(list[0].comName);
+            portListener.setPort(data.comName);
             return portListener.Listen()
         }).then((portEvent)=>{
             var dataCounter = new DataCounter(data.data,data.template,portEvent);
@@ -52,12 +52,25 @@ app.on('ready', function() {
                 },"    ")
                 event.returnValue = saveData
             })
+            ipcMain.once('close',()=>{
+                dataCounter.Close();
+            })
 
         }).catch((e)=>{
             console.log('COM Open Filed');
             console.log(e)
         })
     })
+
+    ipcMain.on('getComport',(event,data)=>{
+        var portListener = new PortListener();
+        portListener.getPortList().then((list)=>{
+            event.returnValue = list.map((obj)=>{
+                return obj.comName
+            })
+        })
+    })
+
 
 
 });

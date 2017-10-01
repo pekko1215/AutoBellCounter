@@ -1,7 +1,8 @@
 // ウィンドウのオブジェクトを取得
-$(() => {
+$(function(){
     const {remote, ipcRenderer} = require('electron');
     const {Menu, dialog} = remote;
+    var config = require('../config.json');
     var fs = require('fs');
 
     var Template = null;
@@ -14,8 +15,7 @@ $(() => {
 
     var win = remote.getCurrentWindow();
     win.openDevTools();
-
-    var menu = Menu.buildFromTemplate([
+    var menu = [
         {
             label: "ファイル",
             submenu: [
@@ -60,23 +60,23 @@ $(() => {
                     }
                 },
                 {
-                    label:"データの保存",
-                    click(item,forcusedWindow){
-                        if(LoadData === null){
+                    label: "データの保存",
+                    click(item, forcusedWindow){
+                        if (LoadData === null) {
                             alert('データがないよん');
                             return;
                         }
-                        dialog.showSaveDialog(null,{
-                            title:'データの保存',
-                            filters:[
+                        dialog.showSaveDialog(null, {
+                            title: 'データの保存',
+                            filters: [
                                 {
-                                    name:'ABCデータファイル',extensions:['abc']
+                                    name: 'ABCデータファイル', extensions: ['abc']
                                 }
                             ]
-                        },(filenames)=>{
-                            saveDataFile(filenames).then(()=>{
+                        }, (filenames) => {
+                            saveDataFile(filenames).then(() => {
                                 alert('保存しました')
-                            }).catch((err)=>{
+                            }).catch((err) => {
                                 alert('保存に失敗しました')
                                 console.log(err);
                             })
@@ -94,18 +94,55 @@ $(() => {
         },
         {
             label: "データ",
+            // submenu: ,
             submenu: [
                 {
                     label: "カウント開始！",
-                    click(item, focusedWindow){
-                        countInit();
+                    submenu: []
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: "カウンタチェック",
+                    click(){
+                        var coms = ipcRenderer.sendSync('getComport');
+                        menu[1].submenu[0].submenu = [];
+                        coms.forEach((com) => {
+                            menu[1].submenu[0].submenu.push({
+                                label: com,
+                                click(){
+                                    countInit(com)
+                                }
+                            })
+                        })
+                        Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
                     }
                 }
-            ]
+            ],
+            click(){
+                console.log(1)
+            }
         }
-    ])
+    ]
+    menu[1].submenu[2].click()
 
-    Menu.setApplicationMenu(menu)
+    menu[0].submenu[4].submenu = config.dataHistry.map((path)=>{
+        return {
+            label:pathToName(path),
+            click(){
+                loadDataFile(path).then(() => {
+                    alert('読み込みが成功しました')
+                }).catch((e) => {
+                    if (e != 'No File') {
+                        alert('エラーが発生しました')
+                    }
+                })
+            }
+        }
+    })
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
 // ウィンドウを表示
     win.show();
@@ -128,12 +165,13 @@ $(() => {
         Segments.bonusSeg[i - 1].draw({digit: 5, value: "  abc"})
     }
 
-    function countInit() {
+    function countInit(comName) {
         Counter = ipcRenderer.sendSync('counterInit', {
             data: LoadData,
-            template: Template
+            template: Template,
+            comName: comName
         });
-
+        upDataRender(Counter)
         ipcRenderer.on("change", (sender, counter) => {
             upDataRender(counter.data);
         })
@@ -151,6 +189,7 @@ $(() => {
                     return;
                 }
                 Template = data;
+                upDataRender(JSON.parse(Template))
             })
         })
     }
@@ -167,28 +206,27 @@ $(() => {
                     reject(err)
                     return;
                 }
+                upDataRender(JSON.parse(data))
+                LoadData = data;
                 Template = data;
             })
         })
     }
 
-    function saveDataFile(files){
+    function saveDataFile(files) {
         return new Promise((resolve, reject) => {
             if (!files) {
                 reject('No File')
                 return;
             }
 
-            if(files[0].slice(-4)!='.abc'){
-                files[0] += '.abc'
+            if (files.slice(-4) != '.abc') {
+                files += '.abc'
             }
 
             saveData = ipcRenderer.sendSync('saveData')
 
-
-            console.log(files)
-
-            fs.writeFile(files,saveData, (err, data) => {
+            fs.writeFile(files, saveData, (err, data) => {
                 if (err) {
                     reject(err)
                     return;
@@ -200,12 +238,13 @@ $(() => {
 
     function upDataRender(data) {
         LoadData = data;
+        console.log(data)
         for (var key in data) {
             switch (key) {
                 case 'playCount':
                 case 'allPlayCount':
                 case 'coin':
-                    Segments[key + 'Seg'].changeValue(fill(data[key], 6))
+                    Segments[key + 'Seg'].changeValue(fill(data[key], 6));
                     break;
                 case 'bonusCount':
                     data[key].forEach((o, i) => {
@@ -220,6 +259,17 @@ $(() => {
                             $('#Bonus' + (i + 1)).remove();
                         }
                     }
+                    break;
+                case 'inCoin':
+                case 'outCoin':
+                    $('#INCount').text(`IN枚数   : ${data['inCoin']}`);
+                    $('#OUTCount').text(`OUT枚数  : ${data['outCoin']}`);
+
+                    var payOut = ((data['outCoin'] / data['inCoin']) * 100.).toFixed(2);
+
+                    $('#PayOutCount').text(`機械割   : ${payOut}%`)
+
+                    break;
 
             }
         }
@@ -227,5 +277,10 @@ $(() => {
 
     function fill(str, len) {
         return (Array(len).fill(" ").join("") + str).slice(-len)
+    }
+
+    function pathToName(path) {
+        var arr = path.replace(/\//g, "\\").split('\\');
+        return arr[arr.length - 1]
     }
 })

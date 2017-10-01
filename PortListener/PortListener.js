@@ -32,45 +32,60 @@ module.exports.prototype.Listen = function () {
         return false
     }
     return new Promise((resolve, reject) => {
-        this.portEvent = new serialPort.parsers.ByteLength({length:1});
-        (new serialPort(this.port, {
-            baudRate: 300,
-            dataBits: 8,
-        }, (e) => {
-            if (e) {
-                reject(e);
-                return;
-            }
-            this.portEventRegist(this.portEvent);
-            this.EventRegist(this.event);
-            resolve(this.event);
+        this.portEvent = new serialPort.parsers.ByteLength({length: 1});
+        new Promise((r) => {
+            this.serialport = new serialPort(this.port, {}, r)
+        }).then((e)=>{
+            console.log(e)
+            return new Promise((r) => {
+                console.log("open")
+                this.serialport.close(r);
+            })
+        }).then(() => {
+            console.log("close");
+            (new serialPort(this.port, {
+                baudRate: 300,
+                dataBits: 8,
+            }, (e) => {
+                if (e) {
+                    reject(e);
+                    return;
+                }
+                this.portEventRegist(this.portEvent);
+                this.EventRegist(this.event);
+                resolve(this.event);
 
-        })).pipe(this.portEvent);
+            })).pipe(this.portEvent);
+        })
     });
 }
 
+module.exports.prototype.Close = function () {
+    this.serialport && this.serialport.close();
+}
+
 module.exports.prototype.portEventRegist = function (ev) {
-    var oldPin = [0,0,0,0,0,0,0,0];
+    var oldPin = [0, 0, 0, 0, 0, 0, 0, 0];
     ev.on('data', (data) => {
         var pin = 0xff ^ data[0]
         var pinArray = ("00000000" + pin.toString(2)).slice(-8).split('').reverse()
-        oldPin.forEach((old,i)=>{
-            if(old==0&&pinArray[i]==1){
-                this.event.emit('standup',{
-                    index:i+1,
-                    pin:pinArray
+        oldPin.forEach((old, i) => {
+            if (old == 0 && pinArray[i] == 1) {
+                this.event.emit('standup', {
+                    index: i + 1,
+                    pin: pinArray
                 })
-                this.event.emit('standup:'+(i+1),pinArray);
+                this.event.emit('standup:' + (i + 1), pinArray);
             }
-            if(old==1&&pinArray[i]==0){
-                this.event.emit('standdown',{
-                    index:i,
-                    pin:pinArray
+            if (old == 1 && pinArray[i] == 0) {
+                this.event.emit('standdown', {
+                    index: i,
+                    pin: pinArray
                 })
-                this.event.emit('standdown:'+i,pinArray);
+                this.event.emit('standdown:' + (i + 1), pinArray);
             }
-            if(pinArray[i]==1){
-                this.event.emit('pin'+(i+1),pinArray);
+            if (pinArray[i] == 1) {
+                this.event.emit('pin' + (i + 1), pinArray);
             }
         })
         this.event.emit('data', pinArray);

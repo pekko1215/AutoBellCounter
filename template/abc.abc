@@ -1,0 +1,44 @@
+{
+    "inCoin": 162,
+    "outCoin": 55,
+    "coin": -107,
+    "playCount": 54,
+    "allPlayCount": 54,
+    "bonusType": [
+        "BIG",
+        "REG"
+    ],
+    "countEvent": [
+        {
+            "event": "pin4",
+            "func": "(counter,event)=>{\n        var index = counter.data.bonusType.indexOf(\"BIG\");\n        counter.data.bonusCount[index]++;\n        counter.emit('bonusstart:'+\"BIG\",this);\n        counter.emit('bonusstart',\"BIG\",this);\n        counter.data.isBonus[index] = true;\n\n        counter.once(event+':down',()=>{\n            if(counter.data.isBonus[index]){\n                counter.data.isBonus[index] = false;\n                counter.emit('bonusend:'+\"BIG\",this);\n                counter.emit('bonusend',\"BIG\",this);\n                counter.data.playCount = 0;\n            }\n        })\n    }"
+        },
+        {
+            "event": "pin3",
+            "func": "(counter,event)=>{\n        var index = counter.data.bonusType.indexOf(\"REG\");\n        counter.data.bonusCount[index]++;\n        counter.emit('bonusstart:'+\"REG\",this);\n        counter.emit('bonusstart',\"REG\",this);\n        counter.data.isBonus[index] = true;\n\n        counter.once(event+':down',()=>{\n            if(counter.data.isBonus[index]){\n                counter.data.isBonus[index] = false;\n                counter.emit('bonusend:'+\"REG\",this);\n                counter.emit('bonusend',\"REG\",this);\n                counter.data.playCount = 0;\n            }\n        })\n    }"
+        },
+        {
+            "event": "coin:insert",
+            "func": "(counter)=>{\n        counter.data.coin+=-1;\n        if(-1<0){\n            counter.data.inCoin+=-(-1);\n        }else {\n            counter.data.outCoin+=-1;\n        }\n    }"
+        },
+        {
+            "event": "coin:payout",
+            "func": "(counter)=>{\n        counter.data.coin+=1;\n        if(1<0){\n            counter.data.inCoin+=-(1);\n        }else {\n            counter.data.outCoin+=1;\n        }\n    }"
+        }
+    ],
+    "bonusCount": [
+        0,
+        0
+    ],
+    "isBonus": [
+        false,
+        false
+    ],
+    "payDelay": 500,
+    "betDelay": 500,
+    "gameCounter": "(counter,betCoin)=>{\n        if(!counter.data.isBonus.some((bool,i)=>{\n            var index = [\"BIG\",\"REG\"].indexOf(counter.data.bonusType[i]);\n                if(index!=-1&&bool){\n                    return true;\n                }\n            })\n        ){\n            counter.data.playCount++;\n            counter.data.allPlayCount++;\n        }\n    }",
+    "history": {
+        "bonus": [],
+        "pay": ""
+    }
+}
